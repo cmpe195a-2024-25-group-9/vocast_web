@@ -1,1 +1,8 @@
-<p>stream works!</p>
+<div class="flex justify-center items-center h-screen">
+    <button 
+        (click)="toggleStream()" 
+        [ngClass]="isStreaming ? 'bg-red-500 text-white' : 'bg-green-500 text-white'" 
+        class="justify-center items-center pt-15 rounded-full focus:outline-none cursor-pointer w-50 h-50">
+        <mat-icon class="!text-8xl !w-50 !h-50">{{ isStreaming ? 'mic_off' : 'mic' }}</mat-icon>
+    </button>
+</div>
