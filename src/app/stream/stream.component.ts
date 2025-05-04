@@ -11,12 +11,23 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class StreamComponent {
   isStreaming: boolean = false;
+  name: string = '';
+  ip: string = '';
 
   constructor(private apiService: ApiService) {}
 
+  ngOnInit(): void {
+    this.name = localStorage.getItem('name') ?? 'N/A';
+    this.ip = localStorage.getItem('ip') ?? 'X.X.X.X';
+  }
+
+  navigateToSettings() {
+    window.location.href = '/settings';
+  }
+
   toggleStream(): void {
     this.isStreaming = !this.isStreaming;
-    this.apiService.postBackendRequest('stream', { start: this.isStreaming, IP: "10.0.0.12" }).subscribe({
+    this.apiService.postBackendRequest('stream', { start: this.isStreaming, ip: this.ip }).subscribe({
       next: (response) => {
         console.log('Stream toggled successfully:', response);
       },

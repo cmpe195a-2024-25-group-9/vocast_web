@@ -1,4 +1,11 @@
-<div class="flex justify-center items-center h-screen">
+<div class="flex flex-col justify-center items-center h-screen">
+    <div class="absolute top-4 right-4">
+        <a href="/settings" class="focus:outline-none text-3xl cursor-pointer text-gray-500">
+            <mat-icon>settings</mat-icon>
+        </a>
+    </div>
+    <p> streaming as {{ name }} </p>
+    <p> streaming to {{ ip }} </p>
     <button 
         (click)="toggleStream()" 
         [ngClass]="isStreaming ? 'bg-red-500 text-white' : 'bg-green-500 text-white'" 

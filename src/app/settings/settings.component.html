@@ -1,1 +1,38 @@
-<p>settings works!</p>
+<div class="flex items-center justify-center min-h-screen bg-gray-100">
+    <div class="absolute top-4 right-4">
+        <a href="/" class="focus:outline-none text-3xl cursor-pointer">
+            <mat-icon>home</mat-icon>
+        </a>
+    </div>
+    <div class="bg-white p-8 rounded-lg shadow-md w-96">
+        <form [formGroup]="userSettings" (ngSubmit)="onSubmit()">
+            <!-- Form Title -->
+            <div class="flex flex-row items-center justify-center text-center mb-6">
+                <h1 class="text-xl font-bold">User Settings</h1>
+                <mat-icon *ngIf="!isEditing" class="cursor-pointer ml-3" (click)="edit()">edit</mat-icon>
+                <button *ngIf="isEditing" type="submit" class="text-green-600 ml-2 mt-2 cursor-pointer">
+                    <mat-icon>check</mat-icon>
+                </button>
+                <mat-icon class="!ml-2 !cursor-pointer !text-red-500" *ngIf="isEditing" (click)="cancel()">cancel</mat-icon>
+            </div>
+
+            <!-- Name Field -->
+            <div class="flex items-center justify-between mb-4">
+                <label class="font-medium">Name:</label>
+                <div class="w-2/3">
+                    <p *ngIf="!isEditing" class="text-right">{{ f.name.value }}</p>
+                    <input *ngIf="isEditing" formControlName="name" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+            </div>
+
+            <!-- IP Address Field -->
+            <div class="flex items-center justify-between mb-4">
+                <label class="font-medium">ESP IP:</label>
+                <div class="w-2/3">
+                    <p *ngIf="!isEditing" class="text-right">{{ f.ip.value }}</p>
+                    <input *ngIf="isEditing" formControlName="ip" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
