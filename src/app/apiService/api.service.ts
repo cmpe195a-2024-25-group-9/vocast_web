@@ -5,12 +5,12 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class ApiServiceService {
+export class ApiService {
   private baseUrl: string = "http://localhost:8000";
 
   constructor(private http: HttpClient) { }
 
   postBackendRequest(endpoint: string, payload: any): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/${endpoint}/`, payload);
+    return this.http.post<any>(`${this.baseUrl}/${endpoint}`, payload);
   }
 }
