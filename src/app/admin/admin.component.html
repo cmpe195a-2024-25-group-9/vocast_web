@@ -6,10 +6,15 @@
         <label class="text-lg font-semibold">Base Station ID: <strong class="text-blue-600">{{ espIP }}</strong></label>
     </div>
     <div class="mt-5">
+        <div class="flex justify-start mb-2 ml-2">
+            <button (click)="getActiveConnections()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                Refresh
+            </button>
+        </div>
         <table class="table-auto border-collapse border border-gray-300 w-full">
             <thead>
                 <tr class="bg-gray-100">
-                    <th class="border border-gray-300 px-4 py-2 text-left">Status</th>
+                    <th class="border border-gray-300 px-4 py-2 text-left">Mic Permission</th>
                     <th class="border border-gray-300 px-4 py-2 text-left">Name</th>
                     <th class="border border-gray-300 px-4 py-2 text-left">Address</th>
                 </tr>
@@ -17,13 +22,13 @@
             <tbody>
                 <tr *ngFor="let user of connectedUsers" class="hover:bg-gray-50">
                     <td class="border border-gray-300 px-4 py-2">
-                        <input type="checkbox" [(ngModel)]="user.status" class="form-checkbox h-5 w-5 text-blue-600" />
+                        <input type="checkbox" (click)="toggleMicPermission(user)" [(ngModel)]="user.status" class="form-checkbox h-5 w-5 text-blue-600" />
                     </td>
                     <td class="border border-gray-300 px-4 py-2">
-                        <input type="text" [(ngModel)]="user.name" class="border border-gray-300 rounded px-2 py-1 w-full" />
+                        <p class="rounded px-2 py-1 w-full"> {{ user.name }} </p>
                     </td>
                     <td class="border border-gray-300 px-4 py-2">
-                        <input type="text" [(ngModel)]="user.address" class="border border-gray-300 rounded px-2 py-1 w-full" />
+                        <p class="rounded px-2 py-1 w-full"> {{ user.address }} </p>
                     </td>
                 </tr>
             </tbody>

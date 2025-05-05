@@ -16,6 +16,29 @@ export class AdminComponent {
 
   constructor(private apiService: ApiService) { }
 
+  getActiveConnections() {
+    this.apiService.getBackendRequest('active_connections').subscribe({
+      next: (response: any) => {
+        this.connectedUsers = response.active_connections;
+      },
+      error: (error: any) => {
+        console.error("error getting active connections");
+      }
+    });
+  }
+
+  toggleMicPermission(user: any) {
+    console.log(user);
+    this.apiService.postBackendRequest('toggle_mic_permission', {ip: user.address, name: user.name}).subscribe({
+      next: (response: any) => {
+        console.log(response.message);
+      },
+      error: (error: any) => {
+        console.error(error);
+      }
+    });
+  }
+
   ngOnInit(): void {
     this.apiService.getBackendRequest('admin_ip').subscribe({
       next: (response: any) => {
@@ -33,5 +56,6 @@ export class AdminComponent {
         console.error('Error fetching admin IP:', error);
       }
     });
+    this.getActiveConnections();
   }
 }
