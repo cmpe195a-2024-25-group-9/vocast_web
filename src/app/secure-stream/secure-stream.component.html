@@ -1,25 +1,41 @@
 <div class="flex items-center justify-center h-screen">
+    <div class="absolute top-4 right-4">
+        <a href="/settings" class="focus:outline-none text-3xl cursor-pointer text-gray-500">
+            <mat-icon>settings</mat-icon>
+        </a>
+    </div>
     <ng-container *ngIf="!connected; else connectedTemplate">
         <form [formGroup]="sessionInfo" (ngSubmit)="onSubmit()" class="bg-white p-6 rounded shadow-md w-96">
             <h2 class="text-xl font-bold mb-4 text-center">Enter Session ID</h2>
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700">Session ID</label>
-                <input
-                    type="text"
-                    formControlName="sessionId"
+                <input type="text" formControlName="sessionId"
                     class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                    required
-                />
+                    required />
             </div>
-            <button
-                type="submit"
-                class="w-full bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-            >
+            <button type="submit"
+                class="w-full bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                 Connect
             </button>
         </form>
     </ng-container>
     <ng-template #connectedTemplate>
-        <div class="text-center text-lg font-semibold">Connected</div>
+        <div class="flex flex-col justify-center items-center h-screen">
+            <div class="text-center text-lg font-semibold">Connected to Session {{ sessionInfo.get('sessionId')?.value}}</div>
+            <p> streaming as {{ name }} </p>
+            <p> streaming to {{ ip }} </p>
+            <p *ngIf="!micPermission" class="text-red-500">Mic permission not granted</p>
+            <p *ngIf="micPermission" class="text-green-500">Mic permission granted</p>
+            <button (click)="toggleStream()"
+                [ngClass]="!micPermission ? 'bg-gray-500 text-white' : (isStreaming ? 'bg-red-500 text-white' : 'bg-green-500 text-white')"
+                [disabled]="!micPermission"
+                class="justify-center items-center pt-15 rounded-full focus:outline-none cursor-pointer w-50 h-50">
+                <mat-icon class="!text-8xl !w-50 !h-50">{{ isStreaming ? 'mic_off' : 'mic' }}</mat-icon>
+            </button>
+            <button (click)="leaveSession()"
+                class="mt-4 bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                Leave Session
+            </button>
+        </div>
     </ng-template>
 </div>
