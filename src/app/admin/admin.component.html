@@ -5,6 +5,21 @@
     <div>
         <label class="text-lg font-semibold">Base Station ID: <strong class="text-blue-600">{{ espIP }}</strong></label>
     </div>
+    <div>
+        <h1>post a question to all connected students: </h1>
+        <form [formGroup]="postQuestion" (ngSubmit)="submitQuestion()" class="flex flex-col">
+            <textarea formControlName="question" class="border border-gray-300 rounded-lg p-2 w-60 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </textarea>
+            <div class="flex flex-row">
+                <button type="submit" class="w-20 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                    post
+                </button>
+                <button (click)="clearQuestion()" class="w-20 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                    clear
+                </button>
+            </div>
+        </form>
+    </div>
     <div class="mt-5">
         <div class="flex justify-start mb-2 ml-2">
             <button (click)="getActiveConnections()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
@@ -33,5 +48,17 @@
                 </tr>
             </tbody>
         </table>
+    </div>
+    <!-- Raised hands queue -->
+    <div class="flex flex-col">
+        <div class="flex flex-row">
+            <h2 class="text-lg font-semibold mr-3">Students hands raised:</h2>
+            <button (click)="clearRaisedHandsQueue()" class="w-40 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"> clear queue </button>
+        </div>
+        <ol class="list-decimal ml-5">
+            <li *ngFor="let student of raisedHands" class="mb-1">
+                {{ student }}
+            </li>
+        </ol>
     </div>
 </div>

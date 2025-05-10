@@ -20,6 +20,8 @@ export class SecureStreamComponent {
   isStreaming: boolean = false;
   micPermission: boolean = false;
   currentSpeaker: string = "";
+  activeQuestion: string = "";
+  handRaised: boolean = false;
   socket: WebSocket
 
   constructor(private fb: FormBuilder, private apiService: ApiService) {
@@ -30,10 +32,12 @@ export class SecureStreamComponent {
         this.micPermission = micPermValue === "True";
       } else if (event.data.includes("SPEAKER")) {
         this.currentSpeaker = event.data.split("SPEAKER")[1]?.trim();
+      } else if (event.data.includes("QUESTION")) {
+        this.activeQuestion = event.data.split("QUESTION")[1]?.trim();
+      } else {
+        console.log("invalid message received via websocket");
       }
-      // TODO include other instances like if admin broadcasts a question
     }
-
   }
 
   ngOnInit(): void {
@@ -65,9 +69,22 @@ export class SecureStreamComponent {
           console.error(error);
         }
       })
-
-      
     }
+  }
+
+  alertHandMovement(movement: string) {
+    this.handRaised = !this.handRaised;
+    this.apiService.customPostRequest(
+      `http://${localStorage.getItem('connected')}:8000/handle_${movement}_hand`, 
+      { ip: localStorage.getItem('connected'), name: localStorage.getItem('name') })
+      .subscribe({
+        next: (response) => {
+          console.log(response);
+        },
+        error: (error) => {
+          console.error(error);
+        }
+    }) 
   }
 
   toggleStream(): void {
@@ -75,7 +92,7 @@ export class SecureStreamComponent {
     // broadcast name if streaming is on, broadcast "" is streaming is off
     if (this.isStreaming) {
       this.apiService.customPostRequest(
-        `http://${localStorage.getItem('connected')}:8000/broadcast_name`, 
+        `http://${localStorage.getItem('connected')}:8000/broadcast_name`,
         { msg: localStorage.getItem('name') })
         .subscribe({
           next: (response) => {
@@ -87,7 +104,7 @@ export class SecureStreamComponent {
         })
     } else {
       this.apiService.customPostRequest(
-        `http://${localStorage.getItem('connected')}:8000/broadcast_name`, 
+        `http://${localStorage.getItem('connected')}:8000/broadcast_name`,
         { msg: "" })
         .subscribe({
           next: (response) => {
@@ -97,7 +114,7 @@ export class SecureStreamComponent {
             console.error(error);
           }
         })
-    }    
+    }
 
     // start streaming to esp
     this.apiService.postBackendRequest('stream', { start: this.isStreaming, ip: this.ip }).subscribe({
@@ -113,7 +130,7 @@ export class SecureStreamComponent {
   leaveSession() {
     this.connected = false;
     localStorage.removeItem('connected');
-    this.apiService.postBackendRequest('leave_session', {ip: this.sessionInfo.value.sessionId, name: localStorage.getItem('name') || 'N/A'}).subscribe({
+    this.apiService.postBackendRequest('leave_session', { ip: this.sessionInfo.value.sessionId, name: localStorage.getItem('name') || 'N/A' }).subscribe({
       next: (response) => {
         console.log(response);
       },
@@ -126,7 +143,7 @@ export class SecureStreamComponent {
   onSubmit(): void {
     const sessionId = this.sessionInfo.value.sessionId;
     console.log(sessionId);
-    this.apiService.postBackendRequest('connect_to_session', {ip: sessionId, name: localStorage.getItem('name') || 'N/A'}).subscribe({
+    this.apiService.postBackendRequest('connect_to_session', { ip: sessionId, name: localStorage.getItem('name') || 'N/A' }).subscribe({
       next: (response) => {
         console.log('Session submitted successfully:', response);
         this.connected = true;

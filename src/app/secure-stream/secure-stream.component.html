@@ -21,6 +21,7 @@
     </ng-container>
     <ng-template #connectedTemplate>
         <div class="flex flex-col justify-center items-center h-screen">
+            <p *ngIf="activeQuestion !== ''" class="mb-10">professor posted a question: {{ activeQuestion }}</p>
             <div class="text-center text-lg font-semibold">Connected to Session {{ sessionInfo.get('sessionId')?.value}}</div>
             <p *ngIf="currentSpeaker !== ''">Currently speaking: {{ currentSpeaker }}</p>
             <p> streaming as {{ name }} </p>
@@ -37,6 +38,10 @@
                 class="mt-4 bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
                 Leave Session
             </button>
+            <div>
+                <button *ngIf="!handRaised" (click)="alertHandMovement('raise')" class="mt-10 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"> raise hand </button>
+                <button *ngIf="handRaised" (click)="alertHandMovement('lower')" class="mt-10 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"> lower hand </button>
+            </div>
         </div>
     </ng-template>
 </div>
