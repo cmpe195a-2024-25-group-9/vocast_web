@@ -22,6 +22,7 @@
     <ng-template #connectedTemplate>
         <div class="flex flex-col justify-center items-center h-screen">
             <div class="text-center text-lg font-semibold">Connected to Session {{ sessionInfo.get('sessionId')?.value}}</div>
+            <p *ngIf="currentSpeaker !== ''">Currently speaking: {{ currentSpeaker }}</p>
             <p> streaming as {{ name }} </p>
             <p> streaming to {{ ip }} </p>
             <p *ngIf="!micPermission" class="text-red-500">Mic permission not granted</p>

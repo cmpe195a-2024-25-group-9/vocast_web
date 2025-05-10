@@ -16,17 +16,24 @@ export class SecureStreamComponent {
     sessionId: FormControl<string | null>;
   }>;
   name: string = "";
-  ip: string = "";
+  ip: string = ""; // esp ip being streamed to
   isStreaming: boolean = false;
   micPermission: boolean = false;
+  currentSpeaker: string = "";
   socket: WebSocket
 
   constructor(private fb: FormBuilder, private apiService: ApiService) {
     this.socket = new WebSocket("ws://localhost:8000/ws");
     this.socket.onmessage = (event) => {
-      console.log("Admin says: ", event.data);
-      this.micPermission = event.data === "True";
+      if (event.data.includes("MIC_PERM")) {
+        const micPermValue = event.data.split("MIC_PERM")[1]?.trim();
+        this.micPermission = micPermValue === "True";
+      } else if (event.data.includes("SPEAKER")) {
+        this.currentSpeaker = event.data.split("SPEAKER")[1]?.trim();
+      }
+      // TODO include other instances like if admin broadcasts a question
     }
+
   }
 
   ngOnInit(): void {
@@ -36,10 +43,63 @@ export class SecureStreamComponent {
     this.connected = localStorage.getItem('connected') ? true : false;
     this.name = localStorage.getItem('name') ?? 'N/A';
     this.ip = localStorage.getItem('ip') ?? 'X.X.X.X';
+    // make request to admin if connected to a session to get current mic status
+    // first get this user's own ip
+    if (this.connected) {
+      this.apiService.getBackendRequest('admin_ip').subscribe({
+        next: (response) => {
+          this.apiService.customGetRequest(
+            `http://${localStorage.getItem('connected')}:8000/get_status/?user_ip=${response.admin_ip}`
+          ).subscribe({
+            next: (response) => {
+              console.log(response);
+              this.micPermission = response.mic_status;
+              this.connected = response.connected_status;
+            },
+            error: (error) => {
+              console.error(error);
+            }
+          })
+        },
+        error: (error) => {
+          console.error(error);
+        }
+      })
+
+      
+    }
   }
 
   toggleStream(): void {
     this.isStreaming = !this.isStreaming;
+    // broadcast name if streaming is on, broadcast "" is streaming is off
+    if (this.isStreaming) {
+      this.apiService.customPostRequest(
+        `http://${localStorage.getItem('connected')}:8000/broadcast_name`, 
+        { msg: localStorage.getItem('name') })
+        .subscribe({
+          next: (response) => {
+            console.log(response);
+          },
+          error: (error) => {
+            console.error(error);
+          }
+        })
+    } else {
+      this.apiService.customPostRequest(
+        `http://${localStorage.getItem('connected')}:8000/broadcast_name`, 
+        { msg: "" })
+        .subscribe({
+          next: (response) => {
+            console.log(response);
+          },
+          error: (error) => {
+            console.error(error);
+          }
+        })
+    }    
+
+    // start streaming to esp
     this.apiService.postBackendRequest('stream', { start: this.isStreaming, ip: this.ip }).subscribe({
       next: (response) => {
         console.log('Stream toggled successfully:', response);

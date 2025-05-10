@@ -14,6 +14,10 @@ export class ApiService {
     return this.http.post<any>(endpoint, payload);
   }
 
+  customGetRequest(endpoint: string) {
+    return this.http.get<any>(endpoint);
+  }
+
   postBackendRequest(endpoint: string, payload: any): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/${endpoint}`, payload);
   }
