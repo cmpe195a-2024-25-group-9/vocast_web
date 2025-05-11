@@ -1,64 +1,105 @@
-<div class="flex flex-col space-y-4">
-    <div>
-        <label class="text-lg font-semibold">Session ID: <strong class="text-blue-600">{{ adminIP }}</strong></label>
-    </div>
-    <div>
-        <label class="text-lg font-semibold">Base Station ID: <strong class="text-blue-600">{{ espIP }}</strong></label>
-    </div>
-    <div>
-        <h1>post a question to all connected students: </h1>
-        <form [formGroup]="postQuestion" (ngSubmit)="submitQuestion()" class="flex flex-col">
-            <textarea formControlName="question" class="border border-gray-300 rounded-lg p-2 w-60 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            </textarea>
-            <div class="flex flex-row">
-                <button type="submit" class="w-20 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                    post
-                </button>
-                <button (click)="clearQuestion()" class="w-20 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
-                    clear
+<div class="flex flex-col space-y-18 w-screen h-screen justify-start items-center bg-amber-50">
+    <p class="text-3xl mt-40">Admin Panel</p>
+    <div class="flex flex-row space-x-10">
+        <!-- session info, post a question -->
+        <div class="flex flex-col justify-center items-center">
+            <p class="text-2xl mb-10">Session Info</p>
+            <div class="flex w-full items-center justify-between mb-4">
+                <label class="font-medium">Session ID:</label>
+                <strong class="text-blue-600">{{ adminIP }}</strong>
+            </div>
+            <div class="flex w-full items-center justify-between mb-4">
+                <label class="font-medium">ESP IP:</label>
+                <strong class="text-blue-600">{{ espIP }}</strong>
+            </div>
+            <div>
+                <h1 class="text-md font-semibold">Post Question: </h1>
+                <form [formGroup]="postQuestion" (ngSubmit)="submitQuestion()" class="flex flex-col space-y-5">
+                    <textarea formControlName="question" class="border border-gray-300 rounded-lg p-2 w-60 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </textarea>
+                    <div class="flex flex-row space-x-5">
+                        <button type="submit" class="w-20 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 cursor-pointer">
+                            Post
+                        </button>
+                        <button (click)="clearQuestion()" class="w-20 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 cursor-pointer">
+                            Clear
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="border-l border-gray-300 h-full"></div>
+        <!-- connected users -->
+        <div class="flex flex-col justify-start items-center">
+            <div class="flex flex-row mb-10 space-x-2 justify-center items-center">
+               <p class="text-2xl">Connected Users</p>
+               <button (click)="getActiveConnections()" class="flex bg-blue-600 text-white justify-center items-center px-1 py-1 rounded-lg hover:bg-blue-700 cursor-pointer">
+                    Refresh <mat-icon>refresh</mat-icon> 
                 </button>
             </div>
-        </form>
-    </div>
-    <div class="mt-5">
-        <div class="flex justify-start mb-2 ml-2">
-            <button (click)="getActiveConnections()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                Refresh
-            </button>
+            <div class="relative flex flex-col w-full h-max-90 overflow-scroll text-gray-700 bg-white shadow-md rounded-lg bg-clip-border">
+                <table class="w-full text-left table-auto min-w-max text-slate-800">
+                    <thead>
+                        <tr class="text-slate-500 border-b border-slate-300 bg-slate-50">
+                            <th class="p-4">
+                                <p class="text-sm leading-none font-normal">
+                                    Mic Permission
+                                </p>
+                            </th>
+                            <th class="p-4">
+                                <p class="text-sm leading-none font-normal">
+                                    Name
+                                </p>
+                            </th>
+                            <th class="p-4">
+                                <p class="text-sm leading-none font-normal">
+                                    Address
+                                </p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let user of connectedUsers" class="hover:bg-slate-50">
+                            <td class="p-4">
+                                <input type="checkbox" (click)="toggleMicPermission(user)" [(ngModel)]="user.status" class="form-checkbox h-5 w-5 text-blue-600" />
+                            </td>
+                            <td class="p-4">
+                                <p class="text-sm font-bold">
+                                    {{ user.name }}
+                                </p>
+                            </td>
+                            <td class="p-4">
+                                <p class="text-sm">
+                                    {{ user.address }}
+                                </p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <table class="table-auto border-collapse border border-gray-300 w-full">
-            <thead>
-                <tr class="bg-gray-100">
-                    <th class="border border-gray-300 px-4 py-2 text-left">Mic Permission</th>
-                    <th class="border border-gray-300 px-4 py-2 text-left">Name</th>
-                    <th class="border border-gray-300 px-4 py-2 text-left">Address</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let user of connectedUsers" class="hover:bg-gray-50">
-                    <td class="border border-gray-300 px-4 py-2">
-                        <input type="checkbox" (click)="toggleMicPermission(user)" [(ngModel)]="user.status" class="form-checkbox h-5 w-5 text-blue-600" />
-                    </td>
-                    <td class="border border-gray-300 px-4 py-2">
-                        <p class="rounded px-2 py-1 w-full"> {{ user.name }} </p>
-                    </td>
-                    <td class="border border-gray-300 px-4 py-2">
-                        <p class="rounded px-2 py-1 w-full"> {{ user.address }} </p>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <!-- Raised hands queue -->
-    <div class="flex flex-col">
-        <div class="flex flex-row">
-            <h2 class="text-lg font-semibold mr-3">Students hands raised:</h2>
-            <button (click)="clearRaisedHandsQueue()" class="w-40 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"> clear queue </button>
+        <div class="border-l border-gray-300 h-full"></div>
+        <!-- Raised hands queue -->
+        <div class="flex flex-col justify-start items-center">
+            <div class="flex flex-row mb-10 space-x-2"> 
+                <p class="text-2xl">Hands Raised Queue</p>
+                <button (click)="clearRaisedHandsQueue()" class="bg-red-600 text-white px-1 py-1 rounded-lg hover:bg-red-700 cursor-pointer">Clear</button>
+            </div>
+            <div class="flex flex-col w-full items-start">
+                <p *ngIf="raisedHands.length === 0">
+                    No Hands Raised
+                </p>
+                <ol class="list-decimal text-lg">
+                    <li *ngFor="let student of raisedHands" class="mb-1">
+                        {{ student }}
+                    </li>
+                </ol>
+            </div>
         </div>
-        <ol class="list-decimal ml-5">
-            <li *ngFor="let student of raisedHands" class="mb-1">
-                {{ student }}
-            </li>
-        </ol>
     </div>
+
+
+    
+    
+    
 </div>

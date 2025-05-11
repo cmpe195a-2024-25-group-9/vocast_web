@@ -2,10 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule, FormGroup, FormControl, ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { ApiService } from '../apiService/api.service';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-admin',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, MatIconModule],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.css'
 })
